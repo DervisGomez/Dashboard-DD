@@ -6,21 +6,16 @@ import {
   UsersFilters,
 } from "@/features/users/components/users-filters";
 
+import { ui } from "@/lib/ui-tokens";
+
 export default function UsersPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">
-          Usuarios
-        </h1>
-
-        <p className="text-gray-500">
-          Lista de usuarios registrados
-        </p>
-      </div>
+    <div className={ui.stackBlock}>
       <UsersFilters />
-      
-      <UsersContainer />
+
+      <section aria-label="Listado de usuarios">
+        <UsersContainer />
+      </section>
     </div>
   );
 }

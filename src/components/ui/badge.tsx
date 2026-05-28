@@ -1,13 +1,8 @@
-import { cn }
-  from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 interface BadgeProps {
   children: React.ReactNode;
-
-  variant?:
-    | "default"
-    | "success"
-    | "warning";
+  variant?: "default" | "success" | "warning";
 }
 
 export function Badge({
@@ -18,31 +13,15 @@ export function Badge({
     <span
       className={cn(
         `
-          inline-flex
-          items-center
-          rounded-full
-          px-2
-          py-1
-          text-xs
-          font-medium
+          inline-flex items-center rounded-full px-2.5 py-0.5
+          text-xs font-medium ring-1 ring-inset
         `,
         variant === "default" &&
-          `
-            bg-gray-100
-            text-gray-700
-          `,
-
+          "bg-zinc-100 text-zinc-600 ring-zinc-200/80",
         variant === "success" &&
-          `
-            bg-green-100
-            text-green-700
-          `,
-
+          "bg-[#e8f5e9] text-[#2e7d32] ring-[#2e7d32]/15",
         variant === "warning" &&
-          `
-            bg-yellow-100
-            text-yellow-700
-          `
+          "bg-amber-50 text-amber-700 ring-amber-200/80"
       )}
     >
       {children}

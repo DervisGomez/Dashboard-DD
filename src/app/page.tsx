@@ -1,7 +1,7 @@
+import {
+  HomeRedirect,
+} from "@/features/auth/components/home-redirect";
+
 export default function HomePage() {
-    return (
-      <main>
-        <h1>Devoción Diaria Admin</h1>
-      </main>
-    );
-  }
+  return <HomeRedirect />;
+}

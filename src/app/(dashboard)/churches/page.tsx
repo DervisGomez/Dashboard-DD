@@ -1,9 +1,7 @@
+import {
+  ChurchesContainer,
+} from "@/features/churches/components/churches-container";
+
 export default function ChurchesPage() {
-    return (
-      <div>
-        <h1 className="text-3xl font-bold">
-          Iglesias
-        </h1>
-      </div>
-    );
-  }
+  return <ChurchesContainer />;
+}

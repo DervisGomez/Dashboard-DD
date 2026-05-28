@@ -1,138 +1,220 @@
+"use client";
+
 import {
-  Eye,
+  CheckCircle2,
+  CircleAlert,
+  ChevronRight,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-import { AppUser }
-  from "@/types/user";
+import { AppUser } from "@/types/user";
+
+import { AvatarInitials } from "@/components/ui/avatar-initials";
+
+import { IconButton } from "@/components/ui/icon-button";
 
 import {
-  Badge,
-} from "@/components/ui/badge";
+  AdminTable,
+  AdminTableBody,
+  AdminTableCell,
+  AdminTableHead,
+  AdminTableHeadCell,
+  AdminTableHeadRow,
+  AdminTableRow,
+} from "@/components/ui/admin-table";
+import { getVisibleCurrentStreak } from "@/features/users/lib/get-visible-current-streak";
 
-import {
-  AvatarInitials,
-} from "@/components/ui/avatar-initials";
+import { cn } from "@/lib/utils";
 
 interface UsersTableProps {
   users: AppUser[];
 }
 
-import Link from "next/link";
+function StatValue({ value }: { value: number | undefined }) {
+  if (value === undefined || value === null) {
+    return (
+      <span className="font-normal text-zinc-300" aria-hidden>
+        —
+      </span>
+    );
+  }
 
-export function UsersTable({
-  users,
-}: UsersTableProps) {
   return (
-    <div
+    <span
       className="
-        overflow-hidden
-        rounded-xl
-        border
-        bg-white
+        inline-flex min-w-[1.5rem] justify-center font-medium
+        tabular-nums text-zinc-800
       "
     >
-      <table className="w-full">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="p-4 text-left text-sm">
-              Usuario
-            </th>
+      {value}
+    </span>
+  );
+}
 
-            <th className="p-4 text-left text-sm">
-              Estado
-            </th>
+export function UsersTable({ users }: UsersTableProps) {
+  const router = useRouter();
 
-            <th className="p-4 text-left text-sm">
-              Racha
-            </th>
+  function goToUserDetail(userId: string) {
+    router.push(`/users/${userId}`);
+  }
 
-            <th className="p-4 text-left text-sm">
-              Total días
-            </th>
+  return (
+    <AdminTable minWidth="680px">
+      <AdminTableHead>
+        <AdminTableHeadRow>
+          <AdminTableHeadCell className="min-w-[240px]">
+            Usuario
+          </AdminTableHeadCell>
+          <AdminTableHeadCell
+            align="center"
+            className="hidden w-28 sm:table-cell"
+          >
+            Racha
+          </AdminTableHeadCell>
+          <AdminTableHeadCell
+            align="center"
+            className="hidden w-28 md:table-cell"
+          >
+            Mejor racha
+          </AdminTableHeadCell>
+          <AdminTableHeadCell
+            align="center"
+            className="hidden w-28 md:table-cell"
+          >
+            Total días
+          </AdminTableHeadCell>
+          <AdminTableHeadCell align="center" className="w-14" />
+        </AdminTableHeadRow>
+      </AdminTableHead>
 
-            <th className="p-4 text-left text-sm">
-              Acción
-            </th>
-          </tr>
-        </thead>
+      <AdminTableBody>
+        {users.map((user) => {
+          const streak = getVisibleCurrentStreak({
+            currentStreak: user.stats?.currentStreak,
+            lastDevotionalDate: user.stats?.lastDevotionalDate,
+          });
+          const best = user.stats?.bestStreak;
+          const total = user.stats?.totalDays;
 
-        <tbody>
-          {users.map((user) => (
-            <tr
+          return (
+            <AdminTableRow
               key={user.id}
-              className="border-t"
+              role="link"
+              tabIndex={0}
+              onClick={() => goToUserDetail(user.id)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  goToUserDetail(user.id);
+                }
+              }}
+              className="
+                cursor-pointer focus-visible:outline-none
+                focus-visible:ring-2 focus-visible:ring-inset
+                focus-visible:ring-[#2e7d32]/25
+              "
             >
-              <td className="p-4">
-                <div className="flex items-center gap-3">
+              <AdminTableCell className="!h-auto py-3">
+                <div className="flex min-w-0 items-center gap-3">
                   <AvatarInitials
-                    name={
-                      user.displayName
-                    }
+                    name={user.displayName || user.email}
+                    size="sm"
                   />
 
-                  <div>
-                    <p className="font-medium">
-                      {
-                        user.displayName
-                      }
-                    </p>
-
-                    <p
-                      className="
-                        text-sm
-                        text-gray-500
-                      "
-                    >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <p className="truncate text-sm font-medium text-zinc-900">
+                        {user.displayName}
+                      </p>
+                      {user.profileCompleted ? (
+                        <CheckCircle2
+                          size={14}
+                          className="shrink-0 text-[#2e7d32]"
+                          aria-label="Perfil completo"
+                        />
+                      ) : (
+                        <CircleAlert
+                          size={14}
+                          className="shrink-0 text-amber-500"
+                          aria-label="Perfil pendiente"
+                        />
+                      )}
+                    </div>
+                    <p className="truncate text-xs text-zinc-500">
                       {user.email}
                     </p>
+
+                    <dl className="mt-2 flex flex-wrap gap-x-4 gap-y-1 sm:hidden">
+                      <div className="flex items-baseline gap-1.5">
+                        <dt className="text-[10px] font-medium uppercase tracking-wide text-zinc-400">
+                          Racha
+                        </dt>
+                        <dd className="text-xs font-medium tabular-nums text-zinc-700">
+                          {streak ?? "—"}
+                        </dd>
+                      </div>
+                      <div className="flex items-baseline gap-1.5">
+                        <dt className="text-[10px] font-medium uppercase tracking-wide text-zinc-400">
+                          Mejor
+                        </dt>
+                        <dd className="text-xs font-medium tabular-nums text-zinc-700">
+                          {best ?? "—"}
+                        </dd>
+                      </div>
+                      <div className="flex items-baseline gap-1.5">
+                        <dt className="text-[10px] font-medium uppercase tracking-wide text-zinc-400">
+                          Total
+                        </dt>
+                        <dd className="text-xs font-medium tabular-nums text-zinc-700">
+                          {total ?? "—"}
+                        </dd>
+                      </div>
+                    </dl>
                   </div>
                 </div>
-              </td>
+              </AdminTableCell>
 
-              <td className="p-4">
-                {user.profileCompleted ? (
-                  <Badge variant="success">
-                    Completo
-                  </Badge>
-                ) : (
-                  <Badge variant="warning">
-                    Pendiente
-                  </Badge>
-                )}
-              </td>
+              <AdminTableCell
+                align="center"
+                className="hidden sm:table-cell"
+              >
+                <StatValue value={streak} />
+              </AdminTableCell>
 
-              <td className="p-4">
-                {
-                  user.stats
-                    ?.currentStreak
-                }
-              </td>
+              <AdminTableCell
+                align="center"
+                className="hidden md:table-cell"
+              >
+                <StatValue value={best} />
+              </AdminTableCell>
 
-              <td className="p-4">
-                {
-                  user.stats
-                    ?.totalDays
-                }
-              </td>
+              <AdminTableCell
+                align="center"
+                className="hidden md:table-cell"
+              >
+                <StatValue value={total} />
+              </AdminTableCell>
 
-              <td className="p-4">
-              <Link
-  href={`/users/${user.id}`}
-  className="
-    inline-flex
-    rounded-lg
-    border
-    p-2
-    hover:bg-gray-100
-  "
->
-  <Eye size={18} />
-</Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+              <AdminTableCell align="center" className="!px-3">
+                <IconButton
+                  href={`/users/${user.id}`}
+                  label="Ver detalle"
+                  className={cn(
+                    `
+                      opacity-0 group-hover:opacity-100
+                      group-focus-within:opacity-100
+                      hover:!bg-[#2e7d32]/10 hover:!text-[#276c2c]
+                      sm:opacity-100
+                    `
+                  )}
+                >
+                  <ChevronRight size={16} strokeWidth={2} />
+                </IconButton>
+              </AdminTableCell>
+            </AdminTableRow>
+          );
+        })}
+      </AdminTableBody>
+    </AdminTable>
   );
 }

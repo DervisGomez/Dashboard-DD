@@ -1,12 +1,558 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Alineado con devoción-diaria/src/theme/variables.scss */
+  --background: #fafafa;
+  --foreground: #1c1c1c;
+  --card: #ffffff;
+  --card-foreground: #1c1c1c;
+  --primary: #2e7d32;
+  --primary-hover: #276c2c;
+  --primary-tint: #438a47;
+  --secondary: #66bb6a;
+  --primary-foreground: #ffffff;
+  --muted: #f1f3f5;
+  --muted-foreground: #374151;
+  --border: #d6d9de;
+  --accent: #f9a825;
+  --accent-soft: #fef3c7;
+  --success: #2e7d32;
+  --success-soft: #e8f5e9;
+  --warning: #f9a825;
+  --warning-soft: #fff8e1;
+  --ring: #66bb6a;
+  --sidebar: #ffffff;
+  --sidebar-border: #d6d9de;
+  --app-radius: 16px;
+  --app-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-soft: 0 1px 3px 0 rgb(15 23 42 / 0.06),
+    0 1px 2px -1px rgb(15 23 42 / 0.06);
+  --shadow-card: 0 4px 6px -1px rgb(15 23 42 / 0.05),
+    0 2px 4px -2px rgb(15 23 42 / 0.05);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 25%, transparent);
+  }
+}
+
+@layer components {
+  .ui-card {
+    border-radius: var(--app-radius);
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .ui-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--foreground);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .ui-input::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  .ui-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 35%, transparent);
+  }
+
+  .ui-select {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: var(--foreground);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .ui-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 35%, transparent);
+  }
+
+  .ui-table-shell {
+    overflow: hidden;
+    border-radius: var(--app-radius);
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .ui-table-head {
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--muted) 80%, var(--card));
+  }
+
+  .ui-table-th {
+    padding: 0.875rem 1.25rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .ui-table-td {
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+    color: var(--foreground);
+  }
+
+  .ui-table-row {
+    border-top: 1px solid var(--border);
+    transition: background-color 0.15s;
+  }
+
+  .ui-table-row:hover {
+    background: color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  /* —— Vista de estadísticas (stats.page) —— */
+
+  .stats-container {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    animation: stats-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .stats-card {
+    border-radius: 0.75rem;
+    border: 1px solid rgb(228 228 231 / 0.8);
+    background: var(--card);
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.04),
+      0 0 0 1px rgb(9 9 11 / 0.03);
+    overflow: hidden;
+  }
+
+  /* Tarjetas anidadas dentro de un Surface: evita doble borde/sombra */
+  .stats-panel .stats-card:not(.stats-hero-card) {
+    border-color: rgb(228 228 231 / 0.65);
+    background: rgb(250 250 250 / 0.8);
+    box-shadow: none;
+  }
+
+  .stats-hero-card {
+    text-align: center;
+    padding: 28px 20px 24px;
+    border-color: color-mix(in srgb, var(--primary) 18%, var(--border));
+    background:
+      radial-gradient(
+        circle at 50% 0%,
+        color-mix(in srgb, var(--primary) 8%, transparent),
+        transparent 60%
+      ),
+      var(--card);
+  }
+
+  .stats-hero-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 12px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--primary) 14%, transparent);
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  .stats-hero-number {
+    color: var(--primary);
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin: 0;
+  }
+
+  .stats-hero-label {
+    margin: 14px 0 0;
+    color: var(--foreground);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .stats-hero-message {
+    margin: 12px auto 0;
+    max-width: 320px;
+    color: var(--muted-foreground);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .stats-spiritual-summary {
+    margin-top: 0;
+    padding: 14px 16px;
+    border-style: dashed;
+    border-color: rgb(228 228 231 / 0.9);
+    background: transparent;
+  }
+
+  .stats-spiritual-line {
+    margin: 0;
+    color: var(--foreground);
+    font-size: 0.9rem;
+    line-height: 1.45;
+    font-weight: 500;
+  }
+
+  .stats-spiritual-line + .stats-spiritual-line {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  }
+
+  .stats-progress-section {
+    display: grid;
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  .stats-progress-card {
+    padding: 20px;
+  }
+
+  .stats-progress-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .stats-progress-header h3 {
+    margin: 0;
+    color: var(--foreground);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .stats-progress-header p {
+    margin: 4px 0 0;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+
+  .stats-progress-header span {
+    color: var(--primary);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .stats-progress-bar {
+    height: 10px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--primary) 14%, var(--border));
+  }
+
+  .stats-progress-card--subtle .stats-progress-bar {
+    background: color-mix(in srgb, var(--muted-foreground) 12%, var(--border));
+  }
+
+  .stats-progress-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--primary);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .stats-progress-card--subtle .stats-progress-bar-fill {
+    background: color-mix(in srgb, var(--primary) 72%, var(--muted-foreground));
+  }
+
+  .stats-microcopy {
+    margin: 10px 0 0;
+    color: var(--muted-foreground);
+    font-size: 13px;
+    line-height: 1.4;
+    opacity: 0.8;
+  }
+
+  .stats-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  .stats-prayer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .stats-summary-card {
+    min-height: 104px;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0;
+  }
+
+  .stats-summary-card--prayer {
+    min-height: 88px;
+    padding: 14px 12px;
+    gap: 2px;
+  }
+
+  .stats-summary-icon {
+    display: inline-flex;
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .stats-summary-card--prayer .stats-summary-icon {
+    margin-bottom: 6px;
+    font-size: 1.2rem;
+  }
+
+  .stats-summary-card strong {
+    color: var(--foreground);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stats-summary-card--prayer strong {
+    font-size: 1.35rem;
+  }
+
+  .stats-summary-label {
+    margin-top: 8px;
+    color: color-mix(in srgb, var(--foreground) 68%, var(--muted-foreground));
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    max-width: 11em;
+  }
+
+  .stats-summary-card--prayer .stats-summary-label {
+    margin-top: 4px;
+    font-size: 0.78rem;
+  }
+
+  .stats-empty-card {
+    margin-top: 14px;
+    padding: 36px 24px;
+    text-align: center;
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+  }
+
+  .stats-empty-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    font-size: 1.6rem;
+  }
+
+  .stats-empty-card h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--foreground);
+  }
+
+  /* Perfil en detalle de usuario */
+  .user-detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    transition: color 0.15s;
+  }
+
+  .user-detail-back:hover {
+    color: var(--primary);
+  }
+
+  .user-profile-card {
+    border-radius: var(--app-radius);
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--app-shadow);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+
+  .user-profile-banner {
+    height: 88px;
+    background:
+      linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--primary) 88%, #1b5e20) 0%,
+        color-mix(in srgb, var(--primary-tint) 95%, var(--secondary)) 100%
+      );
+  }
+
+  .user-profile-body {
+    position: relative;
+    padding: 0 24px 24px;
+    margin-top: -40px;
+  }
+
+  .user-profile-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .user-profile-avatar-wrap {
+    flex-shrink: 0;
+  }
+
+  .user-profile-avatar-wrap > div {
+    width: 80px !important;
+    height: 80px !important;
+    font-size: 1.5rem !important;
+    border: 4px solid var(--card);
+    box-shadow: var(--app-shadow);
+  }
+
+  .user-profile-info h1 {
+    margin: 12px 0 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+    line-height: 1.2;
+  }
+
+  .user-profile-info .user-profile-email {
+    margin-top: 4px;
+    font-size: 0.9rem;
+    color: var(--muted-foreground);
+  }
+
+  .user-profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .user-detail-skeleton {
+    border-radius: var(--app-radius);
+    background: linear-gradient(
+      90deg,
+      var(--muted) 0%,
+      color-mix(in srgb, var(--border) 50%, var(--muted)) 50%,
+      var(--muted) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.2s ease-in-out infinite;
+  }
+
+  @media (min-width: 640px) {
+    .user-profile-row {
+      flex-direction: row;
+      align-items: flex-end;
+    }
+
+    .user-profile-info h1 {
+      margin-top: 0;
+    }
+
+    .stats-progress-section {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 768px) {
+    .stats-container {
+      max-width: 800px;
+    }
+
+    .stats-summary-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .stats-prayer-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@keyframes stats-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

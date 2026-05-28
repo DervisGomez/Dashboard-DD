@@ -1,104 +1,45 @@
 import {
-  collection,
-  getDocs,
-  query,
-  where,
-  limit,
-} from "firebase/firestore";
-
-import { db }
-  from "@/services/firebase";
-
-import { AppUser }
-  from "@/types/user";
+  httpsCallable,
+} from "firebase/functions";
 
 import {
-  AdminRole,
-} from "@/types/admin";
+  functions,
+} from "@/services/firebase";
 
-interface GetUsersOptions {
-  role: AdminRole;
+import {
+  GetUsersOptions,
+  GetUsersResult,
+} from "./types";
 
-  churchId: string | null;
-
-  search?: string;
-
-  profile?: string;
-}
-
-export async function getUsers({
-  role,
-  churchId,
-  search,
-  profile,
-}: GetUsersOptions) {
-  const usersRef =
-    collection(db, "users");
-
-  const constraints = [];
-
-  if (
-    role ===
-    AdminRole.ADMIN_CHURCH
-  ) {
-    constraints.push(
-      where(
-        "churchId",
-        "==",
-        churchId
-      )
-    );
-  }
-
-  if (profile === "completed") {
-    constraints.push(
-      where(
-        "profileCompleted",
-        "==",
-        true
-      )
-    );
-  }
-
-  if (profile === "pending") {
-    constraints.push(
-      where(
-        "profileCompleted",
-        "==",
-        false
-      )
-    );
-  }
-
-  constraints.push(limit(20));
-
-  const usersQuery = query(
-    usersRef,
-    ...constraints
+const getUsersList =
+  httpsCallable<
+    Pick<
+      GetUsersOptions,
+      "search" |
+      "profile" |
+      "sort" |
+      "direction" |
+      "cursor" |
+      "limit"
+    >,
+    GetUsersResult
+  >(
+    functions,
+    "getUsersList"
   );
 
-  const snapshot =
-    await getDocs(usersQuery);
+export async function getUsers(
+  options: GetUsersOptions
+) {
+  const response =
+    await getUsersList({
+      search: options.search,
+      profile: options.profile,
+      sort: options.sort,
+      direction: options.direction,
+      cursor: options.cursor,
+      limit: options.limit,
+    });
 
-  let users: AppUser[] =
-    snapshot.docs.map((doc) => ({
-      id: doc.id,
-
-      ...(doc.data() as Omit<
-        AppUser,
-        "id"
-      >),
-    }));
-
-  if (search) {
-    users = users.filter((user) =>
-      user.displayName
-        .toLowerCase()
-        .includes(
-          search.toLowerCase()
-        )
-    );
-  }
-
-  return users;
+  return response.data;
 }
