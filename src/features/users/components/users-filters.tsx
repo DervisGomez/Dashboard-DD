@@ -47,10 +47,6 @@ export function UsersFilters() {
   const [filtersOpen, setFiltersOpen] =
     useState(false);
 
-  useEffect(() => {
-    setSearchInput(currentSearch);
-  }, [currentSearch]);
-
   const pushParams = useCallback(
     (updates: Record<string, string>) => {
       const params = new URLSearchParams(
@@ -135,7 +131,7 @@ export function UsersFilters() {
               aria-haspopup="dialog"
               className={cn(
                 `
-                  inline-flex h-9 w-full items-center
+                  inline-flex h-9 w-full cursor-pointer items-center
                   justify-center gap-2 rounded-lg border
                   border-zinc-200/80 bg-white px-3
                   text-sm font-medium text-zinc-700
@@ -242,7 +238,7 @@ export function UsersFilters() {
             type="button"
             onClick={clearFilters}
             className={cn(
-              "px-1.5 py-0.5 text-xs font-medium text-zinc-500",
+              "cursor-pointer px-1.5 py-0.5 text-xs font-medium text-zinc-500",
               ui.transition,
               ui.focusRing,
               "rounded-md hover:text-zinc-900"

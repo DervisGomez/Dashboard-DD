@@ -8,8 +8,6 @@ import {
 
 import { cn } from "@/lib/utils";
 
-import { ui } from "@/lib/ui-tokens";
-
 interface PopoverProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

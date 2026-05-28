@@ -268,7 +268,7 @@ export function DashboardSidebar() {
                 onClick={() => setIsLogoutDialogOpen(false)}
                 className={cn(
                   `
-                    h-9 rounded-lg border border-zinc-200/80 bg-white px-3
+                    h-9 cursor-pointer rounded-lg border border-zinc-200/80 bg-white px-3
                     text-sm font-medium text-zinc-600
                   `,
                   ui.transition,
@@ -284,8 +284,8 @@ export function DashboardSidebar() {
                 disabled={isLoggingOut}
                 className={cn(
                   `
-                    h-9 rounded-lg bg-[#2e7d32] px-3 text-sm font-medium
-                    text-white shadow-sm
+                    h-9 cursor-pointer rounded-lg bg-[#2e7d32] px-3
+                    text-sm font-medium text-white shadow-sm
                     disabled:cursor-not-allowed disabled:opacity-70
                   `,
                   ui.transition,

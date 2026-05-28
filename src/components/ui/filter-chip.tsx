@@ -34,7 +34,7 @@ export function FilterChip({
           onClick={onRemove}
           className={cn(
             `
-              -mr-0.5 flex h-4 w-4 shrink-0 items-center
+              -mr-0.5 flex h-4 w-4 shrink-0 cursor-pointer items-center
               justify-center rounded text-zinc-400
             `,
             ui.transition,
